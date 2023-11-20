@@ -1,0 +1,118 @@
+package com.app.DatabaseConnection;
+
+import java.sql.connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class databaseconnector{
+  private static final string JDBC_URL="jdbc:mysql://localhost:3306/ecommerce";
+  private static final String USERNAME="root";
+  private static final string PASSWORD="root";
+
+  static{
+    try{
+      Class.forName("com.mysql.cj.jdbc.Driver");
+  }catch(ClassNotFoundException e){
+    e.printstackTrace();
+  }
+}
+public static Connection getconnection() throws SQLException{
+  return DriverManager.getconnection(JDBC_URL,USERNAME,PASSWORD);
+}
+}
+
+
+package com.app.ecommerce.Test;
+import org.testng.annotations.Test;
+import com.app.app.Databaseconnection.ProductsDAO;
+public class ECommerceApp{
+
+  @Test
+  public void testcheckStockAvaliability(){
+    String productName="Laptop";
+    ProductDAO productDAO=new ProductDAO();
+    int stockQuantity=productDAO.getstockQuantity(productName);
+
+
+    //Display stock information
+
+    System.out.println("======================");
+    System.out.println("|Stock Avaliability|");
+
+     System.out.println("======================");
+    System.out.println("|Product Name|Stock Quantity|");
+    System.out.println("======================");
+    System.out.println("|%-13s|%-15d|%n|",productName,stockQuantity);
+    System.out.println("======================");
+
+}
+}
+
+
+package com.app.DatabaseConnection;
+
+
+import java.sql.Connection;
+import java.sql.Preparedstatement;
+import java.swl.ResultSet;
+public class ProductDAO{
+  public int getStockQuantity(String productName){
+    int stockQuantity=0;
+    try(Connection connection=DatabaseConnector.getConnection()){
+      String sql="SELECT stock_quantity FROM products WHERE product_name=?";
+    try(Preparedstatement preparedStatement=connection.prepareStatement(sql)){
+      preparedStatement.setString(1,productName);
+      ResultSet.resultSet=preparedStatement.executeQuery();
+      if(resultSet.next()){
+        stockQuantity=resultSet.getInt("stock_quantity");
+}
+}
+}catch(SQL Exception e){
+e.printStackTrace();
+}
+return stockQuantity;
+}
+}
+
+
+
+//public List<String>getSimilarProducts(String productName)
+
+//================================To fetch all products from Db
+//List<string>allProducts=new ArrayList<>();
+
+//try(Connection connection=DatabaseConnector.getconnection()){
+//String sql="SELECT product_name FROm products";
+//try(PrepareStatement preparedstatement=connection.preparestatement(sql)){
+//ResultSet resultSet=preparedStatement.executeQuery();
+//while(resultSet.next()){
+//allProducts.add(resultSet.getstring("product_name"));
+//}
+//}
+//}catch(SQLException e){
+//e.printStackTrace();
+//}
+//return allProducts;
+//}
+//}
+
+
+//======TO fetch only similar products from DB
+//List<String>similarProducts=new ArrayList<>();
+//try(Connection connection=DatabaseConnector.getConnection()){
+//String sql="SELECT product_name FROM products WHERE product_name LIKE?";
+//try(Preparedstatement preparedStatement=connection.prepareStatement(sql)){
+//preparedstatement.setString(1,"%"+productName+"%");
+//ResultSet resultSet=preparedStatement.executeQuery();
+
+//while(resultSet.next()){
+//similarProducts.add(resultSet.getString("product_name"));
+//}
+//}
+//}catch(SQLException e){
+//e.printStackTrace();
+//}
+//return similarProducts;
+//}
+//}
